@@ -6,6 +6,7 @@ import (
     "fmt"
     "io"
     "net/http"
+    "os"
 
     "github.com/fatih/color"
     "github.com/rodaine/table"
@@ -118,7 +119,7 @@ func GetBunnyClient() *BunnyClient {
         bunnyClient = &BunnyClient{
             "https://api.bunny.net",
             map[string]string{
-                "AccessKey": "",
+                "AccessKey": os.Getenv("BUNNY_NET_API_KEY"),
                 "Accept":    "application/json",
             },
         }
