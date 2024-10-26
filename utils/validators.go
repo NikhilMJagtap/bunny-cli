@@ -33,6 +33,9 @@ func ValidateIP(ip string) (string, error) {
 }
 
 func AddRemoveValidator(cmd *cobra.Command, args []string) error {
+	if len(args) == 0 {
+		return errors.New("no action provided")
+	}
 	action := args[0]
 	if action != "add" && action != "remove" {
 		return errors.New("invalid action: must be either 'add' or 'remove'")
