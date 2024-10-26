@@ -2,7 +2,6 @@ package api
 
 import (
 	"fmt"
-	"net"
 
 	"github.com/NikhilMJagtap/bunny-cli/client"
 )
@@ -26,16 +25,52 @@ type BlockIPData struct {
 	IP string `json:"BlockedIp"`
 }
 
-func BlockIP(b *client.BunnyClient, pullZoneId uint64, ip net.IP) (interface{}, error) {
+func BlockIP(b *client.BunnyClient, pullZoneId uint64, ip string) (interface{}, error) {
 	data := BlockIPData{
-		IP: ip.String(),
+		IP: ip,
 	}
 	return b.Post(fmt.Sprintf("/pullzone/%d/addBlockedIp/", pullZoneId), data)
 }
 
-func UnblockIP(b *client.BunnyClient, pullZoneId uint64, ip net.IP) (interface{}, error) {
+func UnblockIP(b *client.BunnyClient, pullZoneId uint64, ip string) (interface{}, error) {
 	data := BlockIPData{
-		IP: ip.String(),
+		IP: ip,
 	}
 	return b.Post(fmt.Sprintf("/pullzone/%d/removeBlockedIp/", pullZoneId), data)
+}
+
+type AllowedReferrerData struct {
+	Referrer string `json:"Hostname"`
+}
+
+func AddAllowedReferrer(b *client.BunnyClient, pullZoneId uint64, referrer string) (interface{}, error) {
+	data := AllowedReferrerData{
+		Referrer: referrer,
+	}
+	return b.Post(fmt.Sprintf("/pullzone/%d/addAllowedReferrer/", pullZoneId), data)
+}
+
+func RemoveAllowedReferrer(b *client.BunnyClient, pullZoneId uint64, referrer string) (interface{}, error) {
+	data := AllowedReferrerData{
+		Referrer: referrer,
+	}
+	return b.Post(fmt.Sprintf("/pullzone/%d/removeAllowedReferrer/", pullZoneId), data)
+}
+
+type BlockedReferrerData struct {
+	Referrer string `json:"Hostname"`
+}
+
+func AddBlockedReferrer(b *client.BunnyClient, pullZoneId uint64, referrer string) (interface{}, error) {
+	data := BlockedReferrerData{
+		Referrer: referrer,
+	}
+	return b.Post(fmt.Sprintf("/pullzone/%d/addBlockedReferrer/", pullZoneId), data)
+}
+
+func RemoveBlockedReferrer(b *client.BunnyClient, pullZoneId uint64, referrer string) (interface{}, error) {
+	data := BlockedReferrerData{
+		Referrer: referrer,
+	}
+	return b.Post(fmt.Sprintf("/pullzone/%d/removeBlockedReferrer/", pullZoneId), data)
 }

@@ -2,9 +2,10 @@ package pz
 
 import (
 	"github.com/NikhilMJagtap/bunny-cli/client"
-	pzBlockIPCmd "github.com/NikhilMJagtap/bunny-cli/cmd/pz/block-ip"
 	pzGetCmd "github.com/NikhilMJagtap/bunny-cli/cmd/pz/get"
+	pzBlockIPCmd "github.com/NikhilMJagtap/bunny-cli/cmd/pz/ip"
 	pzListCmd "github.com/NikhilMJagtap/bunny-cli/cmd/pz/list"
+	pzReferrerCmd "github.com/NikhilMJagtap/bunny-cli/cmd/pz/referrer"
 	"github.com/spf13/cobra"
 )
 
@@ -21,6 +22,7 @@ func GetPZCommand(bunnyClient *client.BunnyClient) *cobra.Command {
 	pzCommand.AddCommand(pzListCmd.GetListCommand(bunnyClient))
 	pzCommand.AddCommand(pzGetCmd.GetGetPZCommand(bunnyClient))
 	pzCommand.AddCommand(pzBlockIPCmd.GetBlockIPCommand(bunnyClient))
-	pzCommand.AddCommand(pzBlockIPCmd.GetUnblockIPCommand(bunnyClient))
+	pzCommand.AddCommand(pzReferrerCmd.GetAllowedReferrerCommand(bunnyClient))
+	pzCommand.AddCommand(pzReferrerCmd.GetBlockedReferrerCommand(bunnyClient))
 	return pzCommand
 }
