@@ -23,6 +23,7 @@ func GetPZCommand(bunnyClient *client.BunnyClient) *cobra.Command {
 	pzCommand.AddCommand(pzListCmd.GetListCommand(bunnyClient))
 	pzCommand.AddCommand(pzGetCmd.GetGetPZCommand(bunnyClient))
 	pzCommand.AddCommand(pzBlockIPCmd.GetBlockIPCommand(bunnyClient))
+	pzCommand.AddCommand(pzReferrerCmd.GetAllowedReferrerCommand(bunnyClient))
 	pzCommand.AddCommand(pzReferrerCmd.GetBlockedReferrerCommand(bunnyClient))
 	return pzCommand
 }
