@@ -42,3 +42,7 @@ func init() {
 	rootCmd.AddCommand(pz.GetPZCommand(bunnyClient))
 
 }
+
+func GetRootCommand() *cobra.Command {
+	return rootCmd
+}
