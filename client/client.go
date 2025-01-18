@@ -90,6 +90,31 @@ func (b BunnyClient) Post(path string, data interface{}) (interface{}, error) {
 	return b.unmarshalResponse(resp)
 }
 
+func (b BunnyClient) Delete(path string, data interface{}) (interface{}, error) {
+	c := http.Client{}
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s%s", b.host, path), strings.NewReader(string(jsonData)))
+	if err != nil {
+		return nil, err
+	}
+	for header, val := range b.headers {
+		req.Header.Add(header, val)
+	}
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Accept", "application/json")
+	resp, err := c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode == 204 {
+		return nil, nil
+	}
+	return b.unmarshalResponse(resp)
+}
+
 func (b BunnyClient) HandleCommandOutput(cmd *cobra.Command, output interface{}, columns []string) error {
 	isTable, err := cmd.Flags().GetBool("table")
 	if err != nil {

@@ -42,3 +42,14 @@ func AddRemoveValidator(cmd *cobra.Command, args []string) error {
 	}
 	return nil
 }
+
+func EnableDisableValidator(cmd *cobra.Command, args []string) error {
+	if len(args) == 0 {
+		return errors.New("no action provided")
+	}
+	action := args[0]
+	if action != "enable" && action != "disable" {
+		return errors.New("invalid action: must be either 'enable' or 'disable'")
+	}
+	return nil
+}

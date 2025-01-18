@@ -74,3 +74,36 @@ func RemoveBlockedReferrer(b *client.BunnyClient, pullZoneId uint64, referrer st
 	}
 	return b.Post(fmt.Sprintf("/pullzone/%d/removeBlockedReferrer/", pullZoneId), data)
 }
+
+type HostnameData struct {
+	Hostname string `json:"Hostname"`
+}
+
+func AddHostname(b *client.BunnyClient, pullZoneId uint64, hostname string) (interface{}, error) {
+	data := HostnameData{
+		Hostname: hostname,
+	}
+	return b.Post(fmt.Sprintf("/pullzone/%d/addHostname/", pullZoneId), data)
+}
+
+func RemoveHostname(b *client.BunnyClient, pullZoneId uint64, hostname string) (interface{}, error) {
+	data := HostnameData{
+		Hostname: hostname,
+	}
+	return b.Delete(fmt.Sprintf("/pullzone/%d/removeHostname/", pullZoneId), data)
+}
+
+type ForceSSLData struct {
+	HostnameData
+	ForceSSL bool `json:"ForceSSL"`
+}
+
+func ForceSSL(b *client.BunnyClient, pullZoneId uint64, hostname string, enable bool) (interface{}, error) {
+	data := ForceSSLData{
+		HostnameData: HostnameData{
+			Hostname: hostname,
+		},
+		ForceSSL: enable,
+	}
+	return b.Post(fmt.Sprintf("/pullzone/%d/setForceSSL/", pullZoneId), data)
+}
