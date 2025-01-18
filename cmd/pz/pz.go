@@ -14,15 +14,15 @@ var pzCommand *cobra.Command = nil
 func GetPZCommand(bunnyClient *client.BunnyClient) *cobra.Command {
 	if pzCommand == nil {
 		pzCommand = &cobra.Command{
-			Use:   "pz <command> [flags]",
-			Short: "Manage Pull Zones for BunnyCDN",
-			Long:  "",
+			Use:     "pz <command> [flags]",
+			Short:   "Manage Pull Zones for BunnyCDN",
+			Long:    "",
+			GroupID: "pullzone",
 		}
 	}
 	pzCommand.AddCommand(pzListCmd.GetListCommand(bunnyClient))
 	pzCommand.AddCommand(pzGetCmd.GetGetPZCommand(bunnyClient))
 	pzCommand.AddCommand(pzBlockIPCmd.GetBlockIPCommand(bunnyClient))
-	pzCommand.AddCommand(pzReferrerCmd.GetAllowedReferrerCommand(bunnyClient))
 	pzCommand.AddCommand(pzReferrerCmd.GetBlockedReferrerCommand(bunnyClient))
 	return pzCommand
 }
