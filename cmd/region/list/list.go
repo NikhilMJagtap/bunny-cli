@@ -13,8 +13,9 @@ func GetListCommand(bunnyClient *client.BunnyClient) *cobra.Command {
 		listRegionCommand = &cobra.Command{
 			Use:   "list [flags]",
 			Short: "List regions available with BunnyCDN",
-			Long:  "",
+			Long:  "A basic command that lists all the regions available with BunnyCDN.",
 			Example: `
+bunny-cli region list
             `,
 			RunE: func(cmd *cobra.Command, args []string) error {
 				data, err := api.ListRegions(bunnyClient)

@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/fatih/color v1.17.0 // indirect
 	github.com/google/renameio/v2 v2.0.0

@@ -49,6 +49,9 @@ func genWebDocs(cmd *cobra.Command, path string) error {
 
 		// Generate children commands
 		for _, cmdC := range cmd.Commands() {
+			if cmdC.Name() == "help" {
+				continue
+			}
 			if cmdC.HasAvailableSubCommands() {
 				fmt.Println("Generating subcommand docs for " + cmdC.Name())
 				_ = os.MkdirAll(path+cmd.Name()+"/"+cmdC.Name(), 0o750)
