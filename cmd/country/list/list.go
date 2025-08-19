@@ -18,12 +18,12 @@ func GetListCommand(bunnyClient *client.BunnyClient) *cobra.Command {
 bunny-cli country list
             `,
 			RunE: func(cmd *cobra.Command, args []string) error {
-				data, err := api.ListRegions(bunnyClient)
+				data, err := api.ListCountries(bunnyClient)
 				if err != nil {
 					return err
 				}
 				columns := []string{
-					"Id", "CountryCode", "Name", "ContinentCode", "RegionCode", "PricePerGigabyte",
+					"IsoCode", "Name", "IsEU", "TaxRate",
 				}
 				err = bunnyClient.HandleCommandOutput(
 					cmd,
