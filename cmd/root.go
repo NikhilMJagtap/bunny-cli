@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/NikhilMJagtap/bunny-cli/client"
+	"github.com/NikhilMJagtap/bunny-cli/cmd/country"
 	"github.com/NikhilMJagtap/bunny-cli/cmd/pz"
 	"github.com/NikhilMJagtap/bunny-cli/cmd/region"
 	"github.com/spf13/cobra"
@@ -24,8 +25,8 @@ func Execute() {
 
 func AddGroups() {
 	rootCmd.AddGroup(&cobra.Group{
-		ID:    "region",
-		Title: "Region",
+		ID:    "geo",
+		Title: "Region & Country",
 	})
 	rootCmd.AddGroup(&cobra.Group{
 		ID:    "pullzone",
@@ -39,6 +40,7 @@ func init() {
 	rootCmd.PersistentFlags().Bool("table", false, "prints the results as a table")
 	bunnyClient := client.GetBunnyClient()
 	rootCmd.AddCommand(region.GetRegionCommand(bunnyClient))
+	rootCmd.AddCommand(country.GetCountryCommand(bunnyClient))
 	rootCmd.AddCommand(pz.GetPZCommand(bunnyClient))
 
 }

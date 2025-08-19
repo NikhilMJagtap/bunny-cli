@@ -14,7 +14,7 @@ func GetRegionCommand(bunnyClient *client.BunnyClient) *cobra.Command {
 			Use:     "region <command> [flags]",
 			Short:   "Manage regions for BunnyCDN",
 			Long:    "",
-			GroupID: "region",
+			GroupID: "geo",
 		}
 	}
 	regionCommand.AddCommand(regionListCmd.GetListCommand(bunnyClient))
