@@ -6,6 +6,7 @@ import (
 	pzHostnameCmd "github.com/NikhilMJagtap/bunny-cli/cmd/pz/hostname"
 	pzBlockIPCmd "github.com/NikhilMJagtap/bunny-cli/cmd/pz/ip"
 	pzListCmd "github.com/NikhilMJagtap/bunny-cli/cmd/pz/list"
+	pzPurgeCmd "github.com/NikhilMJagtap/bunny-cli/cmd/pz/purge"
 	pzReferrerCmd "github.com/NikhilMJagtap/bunny-cli/cmd/pz/referrer"
 	"github.com/spf13/cobra"
 )
@@ -28,5 +29,6 @@ func GetPZCommand(bunnyClient *client.BunnyClient) *cobra.Command {
 	pzCommand.AddCommand(pzReferrerCmd.GetBlockedReferrerCommand(bunnyClient))
 	pzCommand.AddCommand(pzHostnameCmd.GetHostnameCommand(bunnyClient))
 	pzCommand.AddCommand(pzHostnameCmd.GetForceSSLCommand(bunnyClient))
+	pzCommand.AddCommand(pzPurgeCmd.GetPurgeCommand(bunnyClient))
 	return pzCommand
 }
