@@ -107,3 +107,13 @@ func ForceSSL(b *client.BunnyClient, pullZoneId uint64, hostname string, enable 
 	}
 	return b.Post(fmt.Sprintf("/pullzone/%d/setForceSSL/", pullZoneId), data)
 }
+
+func PurgePullZone(b *client.BunnyClient, pullZoneId uint64, cacheTag string) (interface{}, error) {
+	var data map[string]interface{}
+	if len(cacheTag) > 0 {
+		data = map[string]interface{}{
+			"CacheTag": cacheTag,
+		}
+	}
+	return b.Post(fmt.Sprintf("/pullzone/%d/purgeCache", pullZoneId), data)
+}
