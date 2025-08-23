@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strconv"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/NikhilMJagtap/bunny-cli/api"
 	"github.com/NikhilMJagtap/bunny-cli/client"
 	"github.com/spf13/cobra"
@@ -14,10 +15,14 @@ var purgeCommand *cobra.Command = nil
 func GetPurgeCommand(bunnyClient *client.BunnyClient) *cobra.Command {
 	if purgeCommand == nil {
 		purgeCommand = &cobra.Command{
-			Use:   "purge pull-zone-id",
+			Use:   "purge [pull_zone_id]",
 			Short: "Purge Pull Zone cache",
 			Long:  "Purge a Pull Zone cache using BunnyCDN API. Optionally, you can pass the CacheTag header to purge specific cache tags.",
-			Args:  cobra.ExactArgs(1),
+			Example: heredoc.Doc(`
+				$ bunny-cli pz purge 12345
+				$ bunny-cli pz purge 12345 --cache-tag "my-cache-tag"
+			`),
+			Args: cobra.ExactArgs(1),
 			RunE: func(cmd *cobra.Command, args []string) error {
 				pullZoneId, err := strconv.Atoi(args[0])
 				if err != nil {

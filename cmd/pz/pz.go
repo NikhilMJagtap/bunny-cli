@@ -1,6 +1,7 @@
 package pz
 
 import (
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/NikhilMJagtap/bunny-cli/client"
 	pzGetCmd "github.com/NikhilMJagtap/bunny-cli/cmd/pz/get"
 	pzHostnameCmd "github.com/NikhilMJagtap/bunny-cli/cmd/pz/hostname"
@@ -16,9 +17,14 @@ var pzCommand *cobra.Command = nil
 func GetPZCommand(bunnyClient *client.BunnyClient) *cobra.Command {
 	if pzCommand == nil {
 		pzCommand = &cobra.Command{
-			Use:     "pz <command> [flags]",
-			Short:   "Manage Pull Zones for BunnyCDN",
-			Long:    "",
+			Use:   "pz <command> [flags]",
+			Short: "Manage Pull Zones for BunnyCDN",
+			Long: heredoc.Doc(`
+				A group of commands to manage pull zones for BunnyCDN.
+			`),
+			Example: heredoc.Doc(`
+				$ bunny-cli pz --help
+			`),
 			GroupID: "pullzone",
 		}
 	}

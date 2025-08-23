@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strconv"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/NikhilMJagtap/bunny-cli/api"
 	"github.com/NikhilMJagtap/bunny-cli/client"
 	utils "github.com/NikhilMJagtap/bunny-cli/utils"
@@ -15,9 +16,13 @@ var blockIPCommand *cobra.Command = nil
 func GetBlockIPCommand(bunnyClient *client.BunnyClient) *cobra.Command {
 	if blockIPCommand == nil {
 		blockIPCommand = &cobra.Command{
-			Use:     "blocked-ip {add|remove} pull-zone-id ip",
-			Short:   "Adds/Removes blocked IP from accessing a Pull Zone",
-			Long:    "Adds/Removes blocked IP from accessing a Pull Zone. Wildcard can be used for IPv4.",
+			Use:   "blocked-ip {add|remove} [pull_zone_id] [ip]",
+			Short: "Adds/Removes blocked IP from accessing a Pull Zone",
+			Long:  "Adds/Removes blocked IP from accessing a Pull Zone. Wildcard can be used for IPv4.",
+			Example: heredoc.Doc(`
+				$ bunny-cli pz blocked-ip add 12345 192.168.1.1
+				$ bunny-cli pz blocked-ip remove 12345 192.168.1.1
+			`),
 			PreRunE: utils.AddRemoveValidator,
 			Args:    cobra.ExactArgs(3),
 			RunE: func(cmd *cobra.Command, args []string) error {

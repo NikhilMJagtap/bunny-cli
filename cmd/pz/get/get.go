@@ -20,8 +20,11 @@ func GetGetPZCommand(bunnyClient *client.BunnyClient) *cobra.Command {
 			Long: heredoc.Doc(`
                 Get a specific Pull Zone from BunnyCDN. When <code>--table</code> is passed, ID, Name, and Origin URL are displayed.
             `),
-			Example: heredoc.Doc("$ bunny-cli pz get 12345"),
-			Args:    cobra.ExactArgs(1),
+			Example: heredoc.Doc(`
+				$ bunny-cli pz get 12345
+				$ bunny-cli pz get 12345 --table
+			`),
+			Args: cobra.ExactArgs(1),
 			RunE: func(cmd *cobra.Command, args []string) error {
 				pullZoneId, err := strconv.Atoi(args[0])
 				if err != nil {

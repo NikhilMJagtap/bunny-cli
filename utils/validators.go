@@ -1,3 +1,4 @@
+// Validators for the CLI should be added here.
 package utils
 
 import (
@@ -9,6 +10,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Validate the IP address for IPv4 and IPv6 using a Regex.
+// A wildcard (*) is allowed for both IPv4.
 func ValidateIP(ip string) (string, error) {
 	if strings.Contains(ip, "*") {
 
@@ -32,6 +35,7 @@ func ValidateIP(ip string) (string, error) {
 	return ip, nil
 }
 
+// A validator that checks the action is `add` or `remove`.
 func AddRemoveValidator(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
 		return errors.New("no action provided")
@@ -43,6 +47,7 @@ func AddRemoveValidator(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
+// A validator that checks the action is `enable` or `disable`.
 func EnableDisableValidator(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
 		return errors.New("no action provided")

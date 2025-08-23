@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strconv"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/NikhilMJagtap/bunny-cli/api"
 	"github.com/NikhilMJagtap/bunny-cli/client"
 	"github.com/NikhilMJagtap/bunny-cli/utils"
@@ -15,9 +16,13 @@ var forceSSLCommand *cobra.Command = nil
 func GetForceSSLCommand(bunnyClient *client.BunnyClient) *cobra.Command {
 	if forceSSLCommand == nil {
 		forceSSLCommand = &cobra.Command{
-			Use:     "force-ssl {enable|disable} pull-zone-id hostname",
-			Short:   "Enables/Disables force SSL for a Pull Zone",
-			Long:    "Enables/Disables force SSL for a Pull Zone",
+			Use:   "force-ssl {enable|disable} [pull_zone_id] [hostname]",
+			Short: "Enables/Disables force SSL for a Pull Zone",
+			Long:  "Enables/Disables force SSL for a Pull Zone",
+			Example: heredoc.Doc(`
+				$ bunny-cli pz force-ssl enable 12345 example.com
+				$ bunny-cli pz force-ssl disable 12345 example.com
+			`),
 			Args:    cobra.ExactArgs(3),
 			PreRunE: utils.EnableDisableValidator,
 			RunE: func(cmd *cobra.Command, args []string) error {
