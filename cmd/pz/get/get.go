@@ -7,6 +7,7 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/NikhilMJagtap/bunny-cli/api"
 	"github.com/NikhilMJagtap/bunny-cli/client"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -26,14 +27,21 @@ func GetGetPZCommand(bunnyClient *client.BunnyClient) *cobra.Command {
 			`),
 			Args: cobra.ExactArgs(1),
 			RunE: func(cmd *cobra.Command, args []string) error {
+				log.Debug("Running get pull zone command")
 				pullZoneId, err := strconv.Atoi(args[0])
 				if err != nil {
 					return errors.New("Pull Zone ID must be an integer. Received " + args[0])
 				}
 				data, err := api.GetPullZone(bunnyClient, uint64(pullZoneId))
 				if err != nil {
+					log.Error("Failed to get pull zone.", data)
+					errorMap, ok := data.(map[string]interface{})
+					if ok {
+						log.Error("Error message: ", errorMap)
+					}
 					return err
 				}
+				log.Debug("Pull zone fetched successfully.")
 				columns := []string{
 					"Id", "Name", "OriginUrl",
 				}

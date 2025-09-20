@@ -4,6 +4,7 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/NikhilMJagtap/bunny-cli/api"
 	"github.com/NikhilMJagtap/bunny-cli/client"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -22,10 +23,13 @@ func GetListCommand(bunnyClient *client.BunnyClient) *cobra.Command {
 				$ bunny-cli region list --table
 			`),
 			RunE: func(cmd *cobra.Command, args []string) error {
+				log.Debug("Running list region command")
 				data, err := api.ListRegions(bunnyClient)
 				if err != nil {
+					log.Error("Failed to list regions: " + err.Error())
 					return err
 				}
+				log.Debug("Region list fetched successfully.")
 				columns := []string{
 					"Id", "Name", "RegionCode", "CountryCode", "ContinentCode",
 				}
