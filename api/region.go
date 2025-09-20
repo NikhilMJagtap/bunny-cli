@@ -1,3 +1,4 @@
+// All APIs that are part of Geo (Region and Country) domain of BunnyCDN.
 package api
 
 import (

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strconv"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/NikhilMJagtap/bunny-cli/api"
 	"github.com/NikhilMJagtap/bunny-cli/client"
 	"github.com/NikhilMJagtap/bunny-cli/utils"
@@ -15,9 +16,15 @@ var blockedReferrerCommand *cobra.Command = nil
 func GetBlockedReferrerCommand(bunnyClient *client.BunnyClient) *cobra.Command {
 	if blockedReferrerCommand == nil {
 		blockedReferrerCommand = &cobra.Command{
-			Use:     "blocked-referrer {add|remove} pull-zone-id referrer",
-			Short:   "Adds/Removes blocked referrer to a Pull Zone",
-			Long:    "Adds/Removes blocked referrer to a Pull Zone",
+			Use:   "blocked-referrer {add|remove} [pull_zone_id] [referrer]",
+			Short: "Adds/Removes blocked referrer to a Pull Zone",
+			Long: heredoc.Doc(`
+				Adds/Removes blocked referrer to a Pull Zone
+			`),
+			Example: heredoc.Doc(`
+				$ bunny-cli pz blocked-referrer add 12345 example.com
+				$ bunny-cli pz blocked-referrer remove 12345 example.com
+			`),
 			Args:    cobra.ExactArgs(3),
 			PreRunE: utils.AddRemoveValidator,
 			RunE: func(cmd *cobra.Command, args []string) error {

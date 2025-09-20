@@ -3,14 +3,17 @@ package client
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/fatih/color"
 	"github.com/rodaine/table"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -21,6 +24,13 @@ type BunnyClient struct {
 
 var bunnyClient *BunnyClient = nil
 
+// A response from the BunnyCDN API is unmarshalled into either
+//   - a map[string]interface{} or
+//   - a []interface{}
+//
+// depending on the response type.
+// The response is returned as an interface{} to allow for flexibility in the return type.
+// In case of an error, nil is returned along with the error.
 func (b BunnyClient) unmarshalResponse(resp *http.Response) (interface{}, error) {
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
@@ -28,6 +38,7 @@ func (b BunnyClient) unmarshalResponse(resp *http.Response) (interface{}, error)
 	if err != nil {
 		return nil, err
 	}
+	// Check if the response is an array.
 	if body[0] == '[' {
 		var list []interface{}
 		if err := json.Unmarshal(body, &list); err != nil {
@@ -42,46 +53,67 @@ func (b BunnyClient) unmarshalResponse(resp *http.Response) (interface{}, error)
 	return data, nil
 }
 
+// Sends a GET request to the BunnyCDN API.
+// The `path` is the relative path to the BunnyCDN API.
+// The `queryParams` is a map of query parameters to be added to the request.
 func (b BunnyClient) Get(path string, queryParams map[string]interface{}) (interface{}, error) {
+	url := fmt.Sprintf("%s%s", b.host, path)
+	log.Debug("Sending GET request to " + url)
 	c := http.Client{}
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s%s", b.host, path), nil)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
 	for header, val := range b.headers {
+		log.Debug("Adding header " + header + " with value " + val)
 		req.Header.Add(header, val)
 	}
 	q := req.URL.Query()
 	if len(queryParams) > 0 {
 		for query, val := range queryParams {
+			log.Debug("Adding query parameter " + query + " with value " + fmt.Sprintf("%v", val))
 			q.Add(query, fmt.Sprintf("%v", val))
 		}
 		req.URL.RawQuery = q.Encode()
 	}
 	resp, err := c.Do(req)
+	log.Debug("Response received from " + url + " with status code " + strconv.Itoa(resp.StatusCode))
 	if err != nil {
+		log.Debug("GET request to " + url + " failed with error: " + err.Error())
 		return nil, err
+	}
+	if resp.StatusCode >= 400 {
+		data, _ := b.unmarshalResponse(resp)
+		return data, errors.New("GET request to " + url + " failed with status code " + strconv.Itoa(resp.StatusCode))
 	}
 	return b.unmarshalResponse(resp)
 }
 
+// Sends a POST request to the BunnyCDN API.
+// The `path` is the relative path to the BunnyCDN API.
+// The `data` is the data to be sent in the request body.
 func (b BunnyClient) Post(path string, data interface{}) (interface{}, error) {
+	url := fmt.Sprintf("%s%s", b.host, path)
+	log.Debug("Sending POST request to " + url)
 	c := http.Client{}
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s%s", b.host, path), strings.NewReader(string(jsonData)))
+	req, err := http.NewRequest("POST", url, strings.NewReader(string(jsonData)))
 	if err != nil {
 		return nil, err
 	}
 	for header, val := range b.headers {
+		log.Debug("Adding header " + header + " with value " + val)
 		req.Header.Add(header, val)
 	}
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Accept", "application/json")
 	resp, err := c.Do(req)
+	log.Debug("Response received from " + url + " with status code " + strconv.Itoa(resp.StatusCode))
 	if err != nil {
+		log.Debug("POST request to " + url + " failed with error: " + err.Error())
 		return nil, err
 	}
 	if resp.StatusCode == 204 {
@@ -90,23 +122,31 @@ func (b BunnyClient) Post(path string, data interface{}) (interface{}, error) {
 	return b.unmarshalResponse(resp)
 }
 
+// Sends a DELETE request to the BunnyCDN API.
+// The `path` is the relative path to the BunnyCDN API.
+// The `data` is the data to be sent in the request body.
 func (b BunnyClient) Delete(path string, data interface{}) (interface{}, error) {
+	url := fmt.Sprintf("%s%s", b.host, path)
+	log.Debug("Sending DELETE request to " + url)
 	c := http.Client{}
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s%s", b.host, path), strings.NewReader(string(jsonData)))
+	req, err := http.NewRequest("DELETE", url, strings.NewReader(string(jsonData)))
 	if err != nil {
 		return nil, err
 	}
 	for header, val := range b.headers {
+		log.Debug("Adding header " + header + " with value " + val)
 		req.Header.Add(header, val)
 	}
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Accept", "application/json")
 	resp, err := c.Do(req)
+	log.Debug("Response received from " + url + " with status code " + strconv.Itoa(resp.StatusCode))
 	if err != nil {
+		log.Debug("DELETE request to " + url + " failed with error: " + err.Error())
 		return nil, err
 	}
 	if resp.StatusCode == 204 {
@@ -115,6 +155,10 @@ func (b BunnyClient) Delete(path string, data interface{}) (interface{}, error) 
 	return b.unmarshalResponse(resp)
 }
 
+// Handles the output of the command.
+// The `cmd` is the command that is being executed.
+// The `output` is the output of the command.
+// The `columns` is the columns to be printed in the table.
 func (b BunnyClient) HandleCommandOutput(cmd *cobra.Command, output interface{}, columns []string) error {
 	isTable, err := cmd.Flags().GetBool("table")
 	if err != nil {
@@ -146,7 +190,11 @@ func (b BunnyClient) HandleCommandOutput(cmd *cobra.Command, output interface{},
 	return nil
 }
 
+// Utility to print the data in tabular format.
+// The required columns should be provided in the columnNames array.
+// A map of data (values) should be provided with the name of the column as the key and the value as the value.
 func (b BunnyClient) PrintTable(columnNames []string, values []map[string]interface{}) {
+	log.Debug("Printing table with columns " + strings.Join(columnNames, ", "))
 	interfaceCols := make([]interface{}, len(columnNames))
 	for i, v := range columnNames {
 		interfaceCols[i] = v
@@ -170,6 +218,8 @@ func (b BunnyClient) PrintTable(columnNames []string, values []map[string]interf
 	tbl.Print()
 }
 
+// Returns a singleton instance of the BunnyClient.
+// The API key is expected to be set in the BUNNY_NET_API_KEY environment variable.
 func GetBunnyClient() *BunnyClient {
 	if bunnyClient == nil {
 		bunnyClient = &BunnyClient{

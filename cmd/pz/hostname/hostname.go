@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strconv"
 
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/NikhilMJagtap/bunny-cli/api"
 	"github.com/NikhilMJagtap/bunny-cli/client"
 	"github.com/NikhilMJagtap/bunny-cli/utils"
@@ -15,9 +16,15 @@ var hostnameCommand *cobra.Command = nil
 func GetHostnameCommand(bunnyClient *client.BunnyClient) *cobra.Command {
 	if hostnameCommand == nil {
 		hostnameCommand = &cobra.Command{
-			Use:     "hostname {add|remove} pull-zone-id hostname",
-			Short:   "Adds/Removes hostname to a Pull Zone",
-			Long:    "Adds/Removes hostname to a Pull Zone",
+			Use:   "hostname {add|remove} [pull_zone_id] [hostname]",
+			Short: "Adds/Removes hostname to a Pull Zone",
+			Long: heredoc.Doc(`
+				Adds/Removes hostname to a Pull Zone
+			`),
+			Example: heredoc.Doc(`
+				$ bunny-cli pz hostname add 12345 example.com
+				$ bunny-cli pz hostname remove 12345 example.com
+			`),
 			Args:    cobra.ExactArgs(3),
 			PreRunE: utils.AddRemoveValidator,
 			RunE: func(cmd *cobra.Command, args []string) error {
